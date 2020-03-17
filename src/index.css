@@ -63,7 +63,7 @@ body{
 .content {
 	background: #fbf9fa;
 	padding-top: 49px;
-    padding-left: 48px;
+  padding-left: 47px;
 }
 
 .video-row {
@@ -139,7 +139,55 @@ body{
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  height: 60vh;
+  height: 100%;
+  margin-top: 30px;
+}
+
+.recording-indicator{
+  color: #a80038;
+  transition: visibility 0s linear 0.3s,opacity 0.3s linear;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  z-index: 10;
+  font-size: 32px;
+}
+
+.record-button{
+  cursor: pointer;
+  color: #fbf9fa;
+  margin-top: 20px;
+  background-color: #a80038;
+  padding: 10px;
+  border-radius: 13px;
+  letter-spacing: 0.7px;
+}
+
+@keyframes recording-indicator {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-o-keyframes recording-indicator{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-moz-keyframes recording-indicator{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+@-webkit-keyframes recording-indicator{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+.recording-indicator {
+   -webkit-animation: recording-indicator 1s infinite;
+   -moz-animation: recording-indicator 1s infinite;
+   -o-animation: recording-indicator 1s infinite;
+    animation: recording-indicator 1s infinite;
 }
 
 @media only screen and (max-width: 425px) {
@@ -150,11 +198,30 @@ body{
   .video-img {
   	height: auto;
   }
+  .videoCaptureTag {
+    width: 100% !important;
+  }
+  .savedVideoTag{
+    width: 100% !important;
+  }
+  .videoCapture {
+    margin-top: 0;
+  }
+  .recording-indicator{
+    font-size: 24px;
+  }
+  .record-button{
+    margin-top: 0;
+    padding: 7px;
+  }
 }
 
 @media screen and (min-device-width: 426px) and (max-device-width: 768px) { 
 	.video-row {
 		width: 50%;
 		padding: 20px;
-	}
+  }
+  .savedVideoTag{
+    width: 70% !important;
+  }
 }
