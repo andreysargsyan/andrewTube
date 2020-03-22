@@ -163,6 +163,10 @@ body{
   letter-spacing: 0.7px;
 }
 
+.record-button:hover {
+  background-color: #970536;
+}
+
 @keyframes recording-indicator {
   0%   { opacity:1; }
   50%  { opacity:0; }
@@ -188,6 +192,58 @@ body{
    -moz-animation: recording-indicator 1s infinite;
    -o-animation: recording-indicator 1s infinite;
     animation: recording-indicator 1s infinite;
+}
+
+.userInfo {
+  height: 80vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+input[type=submit] {
+  background-color: #a80038;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0 auto ;
+  display: block;
+  margin-right: auto ;
+}
+
+input[type=submit]:hover {
+  background-color: #970536;
+}
+
+.container {
+  display: inline-block;
+  padding: 30px;
+  width: 30%;
+}
+
+.videoSending {
+  display: flex;
+}
+
+.containerForm {
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 5px;
 }
 
 @media only screen and (max-width: 425px) {

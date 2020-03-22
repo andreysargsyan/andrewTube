@@ -6,11 +6,13 @@ class VideoCapture extends Component {
     this.videoRef = createRef('video');
     this.savedVideoRef = createRef('video');
     this.buttonRef = createRef('div');
+    this.videoToSend = null;
     this.streams = [];
     this.isFocused = true;
     this.state = {
       isRecording: false,
       isRecorded: false,
+      isWaitingForResponse: false
     };
   }
 
@@ -29,21 +31,19 @@ class VideoCapture extends Component {
   }
 
   startCapturing = () => {
-    console.log(this.isFocused)
     // this.stopCapturing();
     if (this.savedVideoRef.current && this.savedVideoRef.current.src) return;
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      console.log('2')
+      this.streams.push(stream);
       if (!this.isFocused) {
         this.stopCapturing();
         return;
       }
-      this.mediaRecorder = new MediaRecorder(stream);
-      this.streams.push(stream);
+      this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      
       let chunks = [];
 
       this.videoRef.current.srcObject = stream;
-
       this.videoRef.current.onloadedmetadata = (ev) => {
         if (!this.videoRef.current) return;
         try {
@@ -59,19 +59,21 @@ class VideoCapture extends Component {
       }
 
       this.mediaRecorder.onstop = (ev) => {
-        let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+        let blob = new Blob(chunks, { 'type': 'video/webm;' });
         chunks = [];
+        this.videoToSend = blob;
         let videoURL = window.URL.createObjectURL(blob);
         this.savedVideoRef.current.src = videoURL;
 
         this.videoRef.current.style.display = 'none';
         this.savedVideoRef.current.style.display = 'block';
       };
-    }).catch(err => console.error(err.name)) // TODO add modal here
+    }).catch(err => {
+      console.error(err.name) // TODO add modal here
+    })
   }
 
   controlRecording = () => {
-    console.log(this.mediaRecorder.state, 6666666666666666666)
     if (this.mediaRecorder.state === 'recording') {
       this.stopRecording();
       this.stopCapturing();
@@ -99,9 +101,7 @@ class VideoCapture extends Component {
   };
 
   stopCapturing = () => {
-    console.log('3')
     if (!this.streams) return;
-    console.log('4')
     this.streams.forEach(stream => {
       stream.getTracks().forEach(el => {
         el.stop();
@@ -111,19 +111,15 @@ class VideoCapture extends Component {
   };
 
   startCapturingInNextTick = () => {
-    console.log('start capt next tick')
     process.nextTick(() => this.startCapturing());
   }
 
   startCapturingOnFocus = () => {
-    console.log('start capt on focus')
-
     this.isFocused = true;
     this.startCapturingInNextTick();
   }
 
   stopCapturingOnBlur = () => {
-    console.log('stop capt on blur')
     this.isFocused = false;
     process.nextTick(() => {
       if (!this.isFocused) {
@@ -132,7 +128,38 @@ class VideoCapture extends Component {
     });
   }
 
-  render() {  //TODO implement all the code without display none if possible! and add button to send the video 
+  sendVideo = (e) => {
+    e.preventDefault();
+    const {isWaitingForResponse} = this.state;
+    if(isWaitingForResponse) return;
+
+    const username = e.target.username.value
+    const videoName = e.target.videoName.value
+    const description = e.target.description.value
+
+    if(username.length < 2 || videoName.length < 2 || description.length < 2) return; //TODO add modal here
+
+    this.setState({isWaitingForResponse: true});
+
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('videoName', videoName);
+    formData.append('description', description);
+    formData.append('upl', this.videoToSend);
+
+    fetch('http://localhost:5000/save', {
+      method: 'post',
+      body: formData
+    })
+      .then(response => {
+        console.log(response) //TODO add modal here
+      })
+      .catch(function (error) {
+        console.error('Request failed', error);
+      });
+  }
+
+  render() {  //TODO implement all the code without display none if possible!
     const { isRecording, isRecorded } = this.state;
 
     let recordingIndicator = isRecording ? (
@@ -151,24 +178,33 @@ class VideoCapture extends Component {
     } : { width: '50%' };
 
     const savedVideoRefStyle = isRecording ? { display: 'block', width: '50%' } : { display: 'none', width: '50%' };
-    const sendButton = isRecorded ? (<div onClick={() => console.log('submit :D')} className='record-button'>Submit</div>) : '';
-    // const buttonRefStyle = isRecorded ? {display: 'none'} : {}
 
-    // console.log(navigator.userAgent,)
-    // navigator.platform,
-    // navigator.appVersion,
-    // navigator.vendor)
+    const send = isRecorded ? (
+      <div className="container">
+          <h2 style={{margin: '20px 0px', textAlign: 'center'}}>Do you want to upload your video?</h2>
+        <div className="containerForm">
+          <form onSubmit={this.sendVideo}>
+            <label htmlFor="fname">Username</label>
+            <input type="text" id="fname" name="username" placeholder="Your name.." minLength={2} required maxLength='20'/>
+            <label htmlFor="lname">Title</label>
+            <input type="text" id="lname" name="videoName" placeholder="Title.." minLength={2} required maxLength='40'/>
+            <label htmlFor="description">Description</label>
+            <textarea id="description" name="description" placeholder="Description.." required style={{ maxHeight: '200px' }}></textarea>
+            <input type="submit" value="Upload" className='record-button' />
+          </form>
+        </div>
+      </div>) : '';
 
     return (
-      <>
-        <div className="videoCapture">
+      <div className='videoSending'>
+        <div className="videoCapture" style={isRecorded ? { width: '70%' } : { width: '100%' }}>
           <video muted ref={this.videoRef} style={videoRefStyle} className='videoCaptureTag'></video>
           <video ref={this.savedVideoRef} controls style={savedVideoRefStyle} className='savedVideoTag'></video>
           <div onClick={this.controlRecording} ref={this.buttonRef} className='record-button'>{isRecording ? 'Stop Recording' : 'Start Recording'}</div>
           {recordingIndicator}
-          {sendButton}
         </div>
-      </>
+        {send}
+      </div>
     );
   }
 };

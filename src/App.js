@@ -3,6 +3,7 @@ import './index.css';
 import Menu from './Menu';
 import Home from './Home';
 import VideoCapture from './VideoCapture';
+import UserInfo from './UserInfo';
 import { Switch, Route } from 'react-router-dom';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
         <Switch>
           <Route path="/" component={Home} exact />
           <Route path="/videoCapture" component={VideoCapture} exact />
-          {/* <Route path="/shop" component={Shop} exact /> */}
+          <Route path="/user" component={UserInfo} exact />
         </Switch>
       </div>
     </>
