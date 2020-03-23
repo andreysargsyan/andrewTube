@@ -3,7 +3,6 @@
 # dependencies
 /node_modules
 /server/node_modules
-/server/public
 /server/public/uploads
 /.pnp
 .pnp.js

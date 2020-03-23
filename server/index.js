@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const app = express();
 var multer = require('multer');
 const cors = require('cors');
-const fs = require('fs')
+const fs = require('fs');
+const path = require('path');
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,11 +45,19 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single('upl')
 
 app.post('/save', upload, function (req, res) {
-  console.log(req.body, 44444);
   res.send({ saved: true });
-
 });
 
+app.get('/videos/:user/:videoId', function (req, res) {
+  const {user, videoId} = req.params;
+  res.sendFile(path.join(__dirname,`./public/uploads/${user}/${videoId}.webm`));
+});
+
+app.get('/videos/:user/:videoId/info', function (req, res) {
+  const {user, videoId} = req.params;
+  const info = fs.readFileSync(path.join(__dirname,`./public/uploads/${user}/info${videoId}.txt`), 'utf8');
+  res.send({info});
+});
 
 app.listen(5000, function () {
   console.log('Server listening on port 5000!');
