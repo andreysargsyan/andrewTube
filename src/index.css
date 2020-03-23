@@ -246,6 +246,26 @@ input[type=submit]:hover {
   border-radius: 5px;
 }
 
+.showVideo {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.videoInfo {
+  text-align: center;
+}
+
+.uploadedVideo {
+  width: 50%;
+}
+
+.menu-active {
+  color: #fbf9fa; 
+}
+
 @media only screen and (max-width: 425px) {
   .video-row {
   	width: 100%;
@@ -270,6 +290,12 @@ input[type=submit]:hover {
     margin-top: 0;
     padding: 7px;
   }
+  .uploadedVideo {
+    width: 100%;
+  }
+  .showVideo {
+    margin-top: 0px;
+  }
 }
 
 @media screen and (min-device-width: 426px) and (max-device-width: 768px) { 
@@ -279,5 +305,8 @@ input[type=submit]:hover {
   }
   .savedVideoTag{
     width: 70% !important;
+  }
+  .uploadedVideo {
+    width: 70%;
   }
 }
