@@ -252,6 +252,7 @@ input[type=submit]:hover {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  text-align: left;
 }
 
 .videoInfo {
