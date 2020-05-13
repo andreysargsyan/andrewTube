@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.static('public')); 
 
 app.get('/getVideos', function (req, res) {
-  console.log('get request to /')
+  console.log('get request to /');
   // res.send({hello: true});
   res.sendFile(__dirname + '/videos.json');
 });
@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
     let videos = require( __dirname + '/videos.json');
     // console.log(videos)
     videos[username] = videos[username] ? videos[username] : [];
-    videos[username].push({video_link: date,video_name: videoName,video_description: description, views: 0});
+    videos[username].push({video_link: date, video_name: videoName, video_description: description, views: 0});
     videos = JSON.stringify(videos);
 
     fs.writeFile(__dirname +'/videos.json', videos, (err) => {
@@ -51,12 +51,12 @@ const storage = multer.diskStorage({
       else{
         console.log('videos.json changed');
       }
-    })
+    });
     cb(null, `${date}.${type}`);
   }
-})
+});
 
-const upload = multer({ storage }).single('upl')
+const upload = multer({ storage }).single('upl');
 
 app.post('/save', upload, function (req, res) {
   res.send({ saved: true });
@@ -64,12 +64,12 @@ app.post('/save', upload, function (req, res) {
 
 app.get('/videos/:user/:videoId', function (req, res) {
   const {user, videoId} = req.params;
-  res.sendFile(path.join(__dirname,`./public/uploads/${user}/${videoId}.webm`));
+  res.sendFile(path.join(__dirname, `./public/uploads/${user}/${videoId}.webm`));
 });
 
 app.get('/videos/:user/:videoId/info', function (req, res) {
   const {user, videoId} = req.params;
-  const info = fs.readFileSync(path.join(__dirname,`./public/uploads/${user}/info${videoId}.txt`), 'utf8');
+  const info = fs.readFileSync(path.join(__dirname, `./public/uploads/${user}/info${videoId}.txt`), 'utf8');
   res.send({info});
 });
 
